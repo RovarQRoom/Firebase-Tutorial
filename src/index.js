@@ -60,7 +60,7 @@ const querySelector = query(booksRef, where("author", "==", "Capcom"), orderBy("
 // });
 
 // Realtime Listener
-onSnapshot(booksRef, (querySnapshot) => {
+const unsubBooks = onSnapshot(booksRef, (querySnapshot) => {
   let books = [];
   querySnapshot.docs.forEach((doc) => {
     books.push({...doc.data(), id: doc.id});
@@ -69,7 +69,7 @@ onSnapshot(booksRef, (querySnapshot) => {
 });
 
 // Realtime Query Listener
-onSnapshot(querySelector, (querySnapshot) => {
+const unsubQuery = onSnapshot(querySelector, (querySnapshot) => {
   let books = [];
   querySnapshot.docs.forEach((doc) => {
     books.push({...doc.data(), id: doc.id});
@@ -196,10 +196,28 @@ signinForm.addEventListener("submit", (e) => {
 const logout = document.querySelector(".logout");
 logout.addEventListener("click", (e) => {
   e.preventDefault();
-  
+
   signOut(auth).then(() => {
     console.log("User Signed Out");
   }).catch((error) => {
     console.log(error);
   });
+});
+
+// Subscribe to Auth State
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("User Logged In: ", user);
+  } else {
+    console.log("User Logged Out");
+  }
+});
+
+// Unsubscribe from Auth State
+const unsubButton = document.querySelector(".unsub");
+unsubButton.addEventListener("click", (e) => {
+  e.preventDefault();
+  console.log("Unsubscribed from Auth State Change");
+  unsubBooks();
+  unsubQuery();
 });
