@@ -12,7 +12,16 @@ import {
   orderBy,
   serverTimestamp,
   getDoc,
+  updateDoc
  } from "firebase/firestore"; // Import the getFirestore function
+
+ import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  onAuthStateChanged, 
+  signOut 
+} from "firebase/auth"; // Import the getAuth function
 
 const firebaseConfig = { // Your web app's Firebase configuration
     apiKey: "AIzaSyC8Zo2a-l-IsyaacNwma3ks8A2KRvVRUME",
@@ -28,6 +37,9 @@ initializeApp(firebaseConfig);
 
 // Initialize Firebase The Second Step
 const db = getFirestore();
+
+// Initialize Firebase Auth
+const auth = getAuth();
 
 // Collection Reference
 const booksRef = collection(db, "books");
@@ -98,6 +110,27 @@ getDoc(docRef).then((doc) => {
 });
 
 // Update Data in Firestore
+const updateBook = document.querySelector(".update");
+updateBook.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const id = updateBook.id.value;
+  const book = {
+    title: updateBook.title.value,
+    author: updateBook.author.value,
+    createdAt: serverTimestamp()
+  };
+
+  const docRef = doc(db, "books", id);
+
+  updateDoc(docRef, book).then(() => {
+    console.log("Book Updated");
+    updateBook.reset();
+  }).catch((error) => {
+    console.log(error);
+  });
+
+});
 
 // Delete Data from Firestore
 const deleteBook = document.querySelector(".delete");
