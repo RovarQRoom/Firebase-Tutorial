@@ -170,3 +170,36 @@ signupForm.addEventListener("submit", (e) => {
       console.log(errorCode, errorMessage);
     });
 });
+
+// Sign In
+const signinForm = document.querySelector(".login");
+signinForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const email = signinForm.email.value;
+  const password = signinForm.password.value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      console.log("User Signed In", user);
+      signinForm.reset();
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode, errorMessage);
+    });
+});
+
+// Sign Out
+const logout = document.querySelector(".logout");
+logout.addEventListener("click", (e) => {
+  e.preventDefault();
+  
+  signOut(auth).then(() => {
+    console.log("User Signed Out");
+  }).catch((error) => {
+    console.log(error);
+  });
+});
