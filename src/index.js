@@ -2,7 +2,11 @@ import { initializeApp } from "firebase/app"; // Import the initializeApp functi
 import { 
   getFirestore,
   collection,
-  getDocs
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
  } from "firebase/firestore"; // Import the getFirestore function
 
 const firebaseConfig = { // Your web app's Firebase configuration
@@ -23,16 +27,25 @@ const db = getFirestore();
 // Collection Reference
 const booksRef = collection(db, "books");
 
-// Get Collection Data
-getDocs(booksRef).then((querySnapshot) => {
+// Get Collection Data Not Realtime
+// getDocs(booksRef).then((querySnapshot) => {
+//   let books = [];
+//   querySnapshot.docs.forEach((doc) => {
+//     books.push({...doc.data(), id: doc.id});
+//   });
+//   console.log(books);
+// })
+// .catch((error) => {
+//   console.log("Error getting documents: ", error);
+// });
+
+// Realtime Listener
+onSnapshot(booksRef, (querySnapshot) => {
   let books = [];
   querySnapshot.docs.forEach((doc) => {
     books.push({...doc.data(), id: doc.id});
   });
   console.log(books);
-})
-.catch((error) => {
-  console.log("Error getting documents: ", error);
 });
 
 // Add Data to Firestore
@@ -45,8 +58,9 @@ addBook.addEventListener("submit", (e) => {
     author: addBook.author.value
   };
 
-  db.collection("books").add(book).then(() => {
+  addDoc(booksRef, book).then(() => {
     console.log("Book Added");
+    addBook.reset();
   }).catch((error) => {
     console.log(error);
   });
@@ -54,13 +68,16 @@ addBook.addEventListener("submit", (e) => {
 
 // Delete Data from Firestore
 const deleteBook = document.querySelector(".delete");
-addBook.addEventListener("submit", (e) => {
+deleteBook.addEventListener("submit", (e) => {
   e.preventDefault();
-  
+
   const id = deleteBook.id.value;
 
-  db.collection("books").doc(id).delete().then(() => {
+  const docRef = doc(db, "books", id);
+
+  deleteDoc(docRef).then(() => {
     console.log("Book Deleted");
+    deleteBook.reset();
   }).catch((error) => {
     console.log(error);
   });
