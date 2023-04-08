@@ -148,3 +148,25 @@ deleteBook.addEventListener("submit", (e) => {
     console.log(error);
   });
 });
+
+// Sign Up
+const signupForm = document.querySelector(".signup");
+signupForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const email = signupForm.email.value;
+  const password = signupForm.password.value;
+
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      
+      const user = userCredential.user;
+      console.log("User Created", user);
+      signupForm.reset();
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode, errorMessage);
+    });
+});
