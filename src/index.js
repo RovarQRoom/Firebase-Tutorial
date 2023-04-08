@@ -9,6 +9,9 @@ import {
   onSnapshot,
   query,
   where,
+  orderBy,
+  serverTimestamp,
+  getDoc,
  } from "firebase/firestore"; // Import the getFirestore function
 
 const firebaseConfig = { // Your web app's Firebase configuration
@@ -30,7 +33,7 @@ const db = getFirestore();
 const booksRef = collection(db, "books");
 
 // Query Reference
-const querySelector = query(booksRef, where("author", "==", "Capcom"));
+const querySelector = query(booksRef, where("author", "==", "Capcom"), orderBy("createdAt"));
 
 // Get Collection Data Not Realtime
 // getDocs(booksRef).then((querySnapshot) => {
@@ -69,7 +72,8 @@ addBook.addEventListener("submit", (e) => {
 
   const book = {
     title: addBook.title.value,
-    author: addBook.author.value
+    author: addBook.author.value,
+    createdAt: serverTimestamp()
   };
 
   addDoc(booksRef, book).then(() => {
@@ -79,6 +83,21 @@ addBook.addEventListener("submit", (e) => {
     console.log(error);
   });
 });
+
+// Get A Single Document from Firestore
+const docRef = doc(db, "books", "alyu9UBLuuuI0Ru1k2ji");
+getDoc(docRef).then((doc) => {
+  if (doc.exists()) {
+    console.log("Document data:", doc.data());
+  } else {
+    // doc.data() will be undefined in this case
+    console.log("No such document!");
+  }
+}).catch((error) => {
+  console.log("Error getting document:", error);
+});
+
+// Update Data in Firestore
 
 // Delete Data from Firestore
 const deleteBook = document.querySelector(".delete");
