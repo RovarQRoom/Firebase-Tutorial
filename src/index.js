@@ -34,3 +34,34 @@ getDocs(booksRef).then((querySnapshot) => {
 .catch((error) => {
   console.log("Error getting documents: ", error);
 });
+
+// Add Data to Firestore
+const addBook = document.querySelector(".add");
+addBook.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const book = {
+    title: addBook.title.value,
+    author: addBook.author.value
+  };
+
+  db.collection("books").add(book).then(() => {
+    console.log("Book Added");
+  }).catch((error) => {
+    console.log(error);
+  });
+});
+
+// Delete Data from Firestore
+const deleteBook = document.querySelector(".delete");
+addBook.addEventListener("submit", (e) => {
+  e.preventDefault();
+  
+  const id = deleteBook.id.value;
+
+  db.collection("books").doc(id).delete().then(() => {
+    console.log("Book Deleted");
+  }).catch((error) => {
+    console.log(error);
+  });
+});
