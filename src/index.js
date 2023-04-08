@@ -7,6 +7,8 @@ import {
   deleteDoc,
   doc,
   onSnapshot,
+  query,
+  where,
  } from "firebase/firestore"; // Import the getFirestore function
 
 const firebaseConfig = { // Your web app's Firebase configuration
@@ -27,6 +29,9 @@ const db = getFirestore();
 // Collection Reference
 const booksRef = collection(db, "books");
 
+// Query Reference
+const querySelector = query(booksRef, where("author", "==", "Capcom"));
+
 // Get Collection Data Not Realtime
 // getDocs(booksRef).then((querySnapshot) => {
 //   let books = [];
@@ -41,6 +46,15 @@ const booksRef = collection(db, "books");
 
 // Realtime Listener
 onSnapshot(booksRef, (querySnapshot) => {
+  let books = [];
+  querySnapshot.docs.forEach((doc) => {
+    books.push({...doc.data(), id: doc.id});
+  });
+  console.log(books);
+});
+
+// Realtime Query Listener
+onSnapshot(querySelector, (querySnapshot) => {
   let books = [];
   querySnapshot.docs.forEach((doc) => {
     books.push({...doc.data(), id: doc.id});
