@@ -30,4 +30,7 @@ getDocs(booksRef).then((querySnapshot) => {
     books.push({...doc.data(), id: doc.id});
   });
   console.log(books);
+})
+.catch((error) => {
+  console.log("Error getting documents: ", error);
 });
